@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1e40af">
+<title>高考志愿模拟填报系统 · 湖北历史类</title>
+<style>
+:root{
+  --bg:#f4f6fb; --card:#fff; --ink:#1a2233; --ink2:#5b6880; --ink3:#8b95a8;
+  --line:#e4e8f0; --brand:#1e40af; --brand2:#3b6ef5;
+  --chong:#e8590c; --wen:#1f8b4c; --bao:#1e40af; --dian:#6b7280;
+  --warn:#b45309; --warnbg:#fff8eb; --danger:#b91c1c; --dangerbg:#fef2f2;
+  --ok:#047857; --okbg:#ecfdf5;
+  --r:12px; --sh:0 1px 3px rgba(20,30,60,.07),0 6px 20px rgba(20,30,60,.05);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:var(--bg); color:var(--ink); font-size:15px; line-height:1.6;
+  padding-bottom:calc(66px + env(safe-area-inset-bottom));
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{margin:0;font-weight:700;line-height:1.35}
+p{margin:0 0 10px}
+a{color:var(--brand2)}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink)}
+
+/* ---------- header ---------- */
+header{
+  position:sticky;top:0;z-index:50;
+  background:linear-gradient(135deg,#1e3a8a,#2563eb 60%,#3b82f6);
+  color:#fff;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;
+  box-shadow:0 2px 12px rgba(30,58,138,.22);
+}
+.hd-top{display:flex;align-items:center;gap:10px}
+.hd-logo{
+  width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex:0 0 auto;
+}
+.hd-t{font-size:16px;font-weight:700;letter-spacing:.2px}
+.hd-s{font-size:11.5px;opacity:.82;margin-top:1px}
+.hd-badge{
+  margin-left:auto;font-size:11px;background:rgba(255,255,255,.16);
+  padding:3px 9px;border-radius:20px;white-space:nowrap;border:1px solid rgba(255,255,255,.22)
+}
+
+/* ---------- nav ---------- */
+nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:60;
+  background:rgba(255,255,255,.96);backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);
+  display:flex;padding-bottom:env(safe-area-inset-bottom);
+}
+nav button{
+  flex:1;padding:8px 2px 7px;display:flex;flex-direction:column;align-items:center;gap:2px;
+  color:var(--ink3);font-size:10.5px;font-weight:600;transition:.16s;
+}
+nav button .ni{font-size:19px;line-height:1;filter:grayscale(1);opacity:.55}
+nav button.on{color:var(--brand)}
+nav button.on .ni{filter:none;opacity:1;transform:translateY(-1px)}
+
+/* ---------- layout ---------- */
+main{padding:14px 12px 20px;max-width:720px;margin:0 auto}
+.view{display:none}
+.view.on{display:block;animation:fade .22s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:14px;margin-bottom:12px}
+.card-t{font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.card-t .dot{width:4px;height:15px;border-radius:3px;background:var(--brand2)}
+.card-t .sub{margin-left:auto;font-size:11.5px;font-weight:500;color:var(--ink3)}
+
+/* ---------- 分数输入 ---------- */
+.score-row{display:flex;gap:10px;align-items:flex-end}
+.field{flex:1;min-width:0}
+.field label{display:block;font-size:11.5px;color:var(--ink2);font-weight:600;margin-bottom:5px}
+.field input,.field select{
+  width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;
+  background:#fbfcfe;font-weight:700;font-size:17px;transition:.16s;
+}
+.field input:focus,.field select:focus{outline:none;border-color:var(--brand2);background:#fff;box-shadow:0 0 0 3px rgba(59,110,245,.1)}
+.field select{font-size:15px;font-weight:600}
+.hint{font-size:11.5px;color:var(--ink3);margin-top:7px;line-height:1.5}
+.hint.warn{color:#92400e;background:#fffbeb;border-left:3px solid #f59e0b;padding:8px 10px;border-radius:0 7px 7px 0;font-size:11.5px}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:12px 18px;border-radius:10px;font-weight:700;font-size:14.5px;
+  background:var(--brand);color:#fff;transition:.16s;
+}
+.btn:active{transform:scale(.975);opacity:.9}
+.btn.full{width:100%;margin-top:11px}
+.btn.ghost{background:#eef2fb;color:var(--brand)}
+.btn.mini{padding:7px 12px;font-size:12.5px;border-radius:8px}
+.btn.danger{background:#fdeaea;color:var(--danger)}
+
+/* ---------- 结果统计 ---------- */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:4px}
+.stat{
+  text-align:center;padding:10px 4px;border-radius:10px;background:#f7f9fd;border:1px solid var(--line);
+}
+.stat .n{font-size:19px;font-weight:800;line-height:1.1}
+.stat .l{font-size:10.5px;color:var(--ink2);margin-top:3px;font-weight:600}
+.stat.c .n{color:var(--chong)} .stat.w .n{color:var(--wen)}
+.stat.b .n{color:var(--bao)} .stat.d .n{color:var(--dian)}
+
+/* ---------- 院校卡 ---------- */
+.uni{
+  border:1px solid var(--line);border-radius:11px;padding:11px 12px;margin-bottom:9px;
+  background:#fff;position:relative;overflow:hidden;transition:.16s;
+}
+.uni:active{background:#fafbfe}
+.uni .bar{position:absolute;left:0;top:0;bottom:0;width:3.5px}
+.uni.c .bar{background:var(--chong)} .uni.w .bar{background:var(--wen)}
+.uni.b .bar{background:var(--bao)} .uni.d .bar{background:var(--dian)}
+.uni-h{display:flex;align-items:flex-start;gap:8px;padding-left:6px}
+.uni-n{font-weight:700;font-size:14.5px;flex:1;min-width:0;line-height:1.35}
+.uni-s{font-size:17px;font-weight:800;white-space:nowrap;letter-spacing:-.3px}
+.uni.c .uni-s{color:var(--chong)} .uni.w .uni-s{color:var(--wen)}
+.uni.b .uni-s{color:var(--bao)} .uni.d .uni-s{color:var(--dian)}
+.uni-m{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;padding-left:6px}
+.tag{
+  font-size:10.5px;padding:2px 7px;border-radius:5px;background:#f0f3f9;
+  color:var(--ink2);font-weight:600;white-space:nowrap;
+}
+.tag.pub{background:#e8f2ff;color:#1d4ed8}
+.tag.pri{background:#fdf0e8;color:#c2410c}
+.tag.lv{background:#eefaf1;color:#047857}
+.tag.grp{background:#f4f0fd;color:#6d28d9}
+.uni-act{display:flex;gap:7px;margin-top:9px;padding-left:6px}
+
+/* ---------- 志愿表 ---------- */
+.vol{
+  border:1px solid var(--line);border-radius:11px;padding:10px 11px;margin-bottom:9px;background:#fff;
+  display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;
+}
+.vol-no{
+  flex:0 0 30px;height:30px;border-radius:8px;background:#f0f3f9;color:var(--ink2);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;
+}
+.vol.c .vol-no{background:#fdeee4;color:var(--chong)}
+.vol.w .vol-no{background:#e9f7ef;color:var(--wen)}
+.vol.b .vol-no{background:#e8eefe;color:var(--bao)}
+.vol.d .vol-no{background:#f1f2f5;color:var(--dian)}
+.vol-b{flex:1 1 0;min-width:0}
+.vol-n{font-weight:700;font-size:14px;line-height:1.35}
+.vol-i{font-size:11.5px;color:var(--ink2);margin-top:3px;display:flex;flex-wrap:wrap;gap:4px 8px}
+.vol-maj{font-size:11.5px;color:var(--ink3);margin-top:5px;word-break:break-all}
+.vol-ops{
+  flex:1 0 100%;display:flex;gap:6px;
+  margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);
+}
+.vol-ops button{
+  flex:1;height:30px;border-radius:7px;background:#f2f4f9;color:var(--ink2);
+  font-size:11.5px;font-weight:700;
+}
+.vol-ops button:active{background:#e4e8f2}
+.vol-ops button.del{color:var(--danger);background:#fdeaea}
+.vol-ops button[disabled]{opacity:.32}
+
+/* ---------- 提示条 ---------- */
+.tip{border-radius:10px;padding:11px 12px;font-size:12.5px;line-height:1.6;margin-bottom:10px;display:flex;gap:8px}
+.tip .ti{flex:0 0 auto;font-size:14px;line-height:1.5}
+.tip.warn{background:var(--warnbg);color:#7c4a03;border:1px solid #fde8c8}
+.tip.danger{background:var(--dangerbg);color:#7f1d1d;border:1px solid #fecaca}
+.tip.ok{background:var(--okbg);color:#065f46;border:1px solid #a7f3d0}
+.tip.info{background:#eff5ff;color:#1e3a8a;border:1px solid #d5e3ff}
+
+/* ---------- 进度条 ---------- */
+.pbar{height:9px;border-radius:6px;background:#eef1f7;display:flex;overflow:hidden;margin:8px 0 6px}
+.pbar i{display:block;height:100%}
+.pbar i.c{background:var(--chong)} .pbar i.w{background:var(--wen)}
+.pbar i.b{background:var(--bao)} .pbar i.d{background:var(--dian)}
+.plegend{display:flex;gap:12px;font-size:11px;color:var(--ink2);flex-wrap:wrap}
+.plegend span{display:flex;align-items:center;gap:4px}
+.plegend i{width:8px;height:8px;border-radius:2px;display:block}
+
+/* ---------- 筛选 ---------- */
+.filters{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;-webkit-overflow-scrolling:touch}
+.filters::-webkit-scrollbar{display:none}
+.chip{
+  flex:0 0 auto;padding:6px 13px;border-radius:20px;background:#fff;border:1.5px solid var(--line);
+  font-size:12.5px;font-weight:600;color:var(--ink2);transition:.16s;
+}
+.chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.search{
+  width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;
+  background:#fbfcfe;margin-bottom:10px;font-size:15px;
+}
+.search:focus{outline:none;border-color:var(--brand2);background:#fff}
+
+/* ---------- 规则说明 ---------- */
+.rule h4{font-size:13.5px;color:var(--brand);margin:14px 0 6px;display:flex;align-items:center;gap:6px}
+.rule h4:first-child{margin-top:0}
+.rule p,.rule li{font-size:13px;color:var(--ink2);line-height:1.7}
+.rule ul{padding-left:19px;margin:5px 0}
+.rule li{margin-bottom:4px}
+.rule b{color:var(--ink)}
+.kv{display:flex;gap:8px;font-size:12.5px;padding:7px 0;border-bottom:1px dashed var(--line)}
+.kv:last-child{border-bottom:none}
+.kv .k{flex:0 0 92px;color:var(--ink3);font-weight:600}
+.kv .v{flex:1;color:var(--ink)}
+.note{font-size:11.5px;color:var(--ink3);line-height:1.65;background:#f8fafd;border-radius:9px;padding:10px 11px;border:1px solid var(--line)}
+
+/* ---------- 空态 ---------- */
+.empty{text-align:center;padding:34px 16px;color:var(--ink3)}
+.empty .e-ic{font-size:34px;opacity:.4;margin-bottom:9px}
+.empty .e-t{font-size:13.5px;font-weight:600;margin-bottom:4px;color:var(--ink2)}
+.empty .e-s{font-size:12px;line-height:1.6}
+
+/* ---------- 浮动志愿条 ---------- */
+#cart-bar{
+  position:fixed;left:50%;bottom:74px;transform:translate(-50%,16px);
+  background:var(--brand);color:#fff;padding:9px 16px;border-radius:22px;
+  font-size:13px;font-weight:600;z-index:120;opacity:0;pointer-events:none;transition:.24s;
+  box-shadow:0 6px 18px rgba(37,99,235,.32);white-space:nowrap;cursor:pointer;
+}
+#cart-bar.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#cart-bar b{font-size:15px;margin:0 2px}
+
+/* ---------- toast ---------- */
+#toast{
+  position:fixed;left:50%;bottom:88px;transform:translate(-50%,14px);
+  background:rgba(26,34,51,.94);color:#fff;padding:10px 18px;border-radius:24px;
+  font-size:13.5px;font-weight:600;z-index:200;opacity:0;pointer-events:none;transition:.24s;
+  max-width:86vw;text-align:center;
+}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- 弹窗 ---------- */
+#modal{position:fixed;inset:0;background:rgba(16,24,40,.5);z-index:150;display:none;align-items:flex-end;justify-content:center}
+#modal.on{display:flex}
+.sheet{
+  background:#fff;width:100%;max-width:720px;border-radius:18px 18px 0 0;
+  padding:16px 16px calc(18px + env(safe-area-inset-bottom));max-height:88vh;overflow-y:auto;
+  animation:up .24s ease;
+}
+@keyframes up{from{transform:translateY(30px)}to{transform:none}}
+.sheet-h{display:flex;align-items:center;margin-bottom:12px}
+.sheet-h h3{font-size:16px;flex:1}
+.sheet-h button{font-size:22px;color:var(--ink3);width:32px;height:32px;line-height:1}
+.maj-in{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:9px;background:#fbfcfe;margin-bottom:8px;font-size:15px}
+.maj-in:focus{outline:none;border-color:var(--brand2);background:#fff}
+.switch{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--line);margin-top:6px}
+.switch input{width:20px;height:20px;accent-color:var(--brand)}
+.switch label{font-size:13.5px;font-weight:600;flex:1}
+
+@media(max-width:360px){
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .uni-s{font-size:16px}
+}
+@media print{
+  header,nav,#toast,#cart-bar,.no-print{display:none!important}
+  body{background:#fff;padding:0}
+  main{max-width:none;padding:0}
+  .view{display:none!important}
+  .view.on{display:block!important}
+  .card{box-shadow:none;border:1px solid #ddd}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hd-top">
+    <div class="hd-logo">🎓</div>
+    <div>
+      <div class="hd-t">高考志愿模拟填报系统</div>
+      <div class="hd-s">湖北省 · 首选历史 · 参照 2026 年投档数据</div>
+    </div>
+    <div class="hd-badge">学习模拟版</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ 1. 智能填报 ============ -->
+  <section class="view on" id="v-fill">
+    <div class="card">
+      <div class="card-t"><i class="dot"></i>输入成绩<span class="sub">2027 届专用</span></div>
+      <div class="score-row">
+        <div class="field">
+          <label>高考总分（历史类）</label>
+          <input type="number" id="score" inputmode="numeric" placeholder="例如 480" min="150" max="750">
+        </div>
+        <div class="field" style="flex:0 0 108px">
+          <label>批次</label>
+          <select id="batch">
+            <option value="bk">本科批</option>
+            <option value="zk">高职高专批</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn full" id="btn-match">开始智能匹配 →</button>
+      <div class="hint">
+        提示：分数不确定时，可分别试 460 / 480 / 500 看能报什么学校，体会分数的"含金量"。
+      </div>
+    </div>
+
+    <div id="match-out"></div>
+
+    <div class="card">
+      <div class="card-t"><i class="dot"></i>怎么用这个系统</div>
+      <div class="rule">
+        <p style="margin-bottom:8px"><b>第 1 步</b>：输入分数 → 点"开始智能匹配"，看你能报哪些学校。</p>
+        <p style="margin-bottom:8px"><b>第 2 步</b>：把心仪的学校点"加入志愿表"，去"志愿表"页面排顺序。</p>
+        <p style="margin-bottom:8px"><b>第 3 步</b>：看志愿表的"梯度分析"，检查冲稳保比例是否合理。</p>
+        <p style="margin-bottom:0"><b>第 4 步</b>：切换到"规则说明"，把平行志愿的投档规则搞明白——这是最重要的一课。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. 志愿表 ============ -->
+  <section class="view" id="v-list">
+    <div class="card">
+      <div class="card-t"><i class="dot"></i>我的志愿表<span class="sub" id="vol-count">0 / 45</span></div>
+      <div class="pbar" id="pbar"><i class="c" style="width:0"></i><i class="w" style="width:0"></i><i class="b" style="width:0"></i><i class="d" style="width:0"></i></div>
+      <div class="plegend">
+        <span><i style="background:var(--chong)"></i>冲 <b id="n-c">0</b></span>
+        <span><i style="background:var(--wen)"></i>稳 <b id="n-w">0</b></span>
+        <span><i style="background:var(--bao)"></i>保 <b id="n-b">0</b></span>
+        <span><i style="background:var(--dian)"></i>垫 <b id="n-d">0</b></span>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:11px" class="no-print">
+        <button class="btn ghost mini" id="btn-print">🖨 打印志愿表</button>
+        <button class="btn ghost mini" id="btn-clear">清空</button>
+      </div>
+    </div>
+    <div id="vol-list"></div>
+  </section>
+
+  <!-- ============ 3. 院校库 ============ -->
+  <section class="view" id="v-lib">
+    <div class="card">
+      <div class="card-t"><i class="dot"></i>院校库<span class="sub" id="lib-count"></span></div>
+      <input class="search" id="q" placeholder="🔍 输入学校名，如：黄冈师范">
+      <div class="filters" id="filters">
+        <button class="chip on" data-f="all">全部</button>
+        <button class="chip" data-f="hb">湖北</button>
+        <button class="chip" data-f="pub">公办</button>
+        <button class="chip" data-f="pri">民办</button>
+        <button class="chip" data-f="985">双一流</button>
+        <button class="chip" data-f="bk">本科</button>
+        <button class="chip" data-f="zk">专科</button>
+      </div>
+      <div id="lib-list"></div>
+    </div>
+  </section>
+
+  <!-- ============ 4. 规则说明 ============ -->
+  <section class="view" id="v-help">
+    <div class="card">
+      <div class="card-t"><i class="dot"></i>湖北志愿填报规则（家长必读）</div>
+      <div class="rule">
+        <h4>① 湖北高考志愿长什么样</h4>
+        <div class="kv"><span class="k">本科普通批</span><span class="v"><b>45 个</b>院校专业组平行志愿，每个专业组内可填 <b>6 个专业</b> + 是否服从调剂</span></div>
+        <div class="kv"><span class="k">本科提前批</span><span class="v">20 个院校专业组</span></div>
+        <div class="kv"><span class="k">高职高专提前批</span><span class="v">20 个院校专业组</span></div>
+        <div class="kv"><span class="k">高职高专普通批</span><span class="v">30 个院校专业组（2026 年由 20 个增加）</span></div>
+        <div class="kv"><span class="k">填报时间</span><span class="v">第一次集中填报 6 月 29 日 — 7 月 2 日；第二次（高职高专普通批）8 月 6 日 — 8 月 9 日</span></div>
+        <div class="kv"><span class="k">官方平台</span><span class="v">湖北省招生数智综合平台（考生本人账号登录）</span></div>
+
+        <h4>② 什么是"院校专业组"</h4>
+        <p>一所大学会按<b>选科要求</b>拆成好几个"专业组"。比如同一所大学，"历史+不限"是一个组，"历史+政治"是另一个组。</p>
+        <p><b>一个专业组 = 一个志愿</b>。填了某校的"第05组"，就只在这个组里竞争，不会被调到别的组。</p>
+        <p>选科要求对不上，这个组就<b>不能填</b>。所以填志愿前一定要查当年的《招生计划》，看每个组要求什么科目。</p>
+
+        <h4>③ 平行志愿怎么投档（最关键）</h4>
+        <p>八个字：<b>"分数优先、遵循志愿"</b>。</p>
+        <ul>
+          <li><b>分数优先</b>：全省考生按分数从高到低排成一队，分数高的先挑。</li>
+          <li><b>遵循志愿</b>：轮到你时，从你的<b>第 1 个志愿开始往后查</b>，哪个学校还有空位，就投给哪个，投出去就结束。</li>
+          <li><b>一次投档</b>：每人<b>只投一次</b>。一旦投进某个学校，后面的志愿全部作废——即使你被退档，也不会再投给第 2 个志愿。</li>
+        </ul>
+        <div class="tip danger"><span class="ti">⚠️</span><span><b>最容易踩的坑：</b>把 45 个志愿全填成"冲"的学校。一旦冲进去但专业分数不够、又不服从调剂，被退档后<b>直接掉到下一批次</b>，45 个志愿全白填。</span></div>
+
+        <h4>④ 冲、稳、保、垫 怎么配</h4>
+        <div class="kv"><span class="k">冲（约 20%）</span><span class="v">比自己分数高 <b>3—18 分</b>的学校，博一博更好的平台</span></div>
+        <div class="kv"><span class="k">稳（约 40%）</span><span class="v">和自己分数<b>上下 3—8 分</b>的学校，主力区</span></div>
+        <div class="kv"><span class="k">保（约 30%）</span><span class="v">比自己分数低 <b>8—25 分</b>的学校，确保有学上</span></div>
+        <div class="kv"><span class="k">垫（约 10%）</span><span class="v">比自己分数低 <b>25 分以上</b>，最后兜底</span></div>
+        <p style="margin-top:8px"><b>顺序铁律：</b>必须严格从高分到低分排。把低分学校放在前面，等于白送一个志愿位。</p>
+
+        <h4>⑤ "服从调剂"到底勾不勾</h4>
+        <ul>
+          <li><b>勾</b>：可能被调到该校该专业组里你没填的专业，但一般不会被退档。</li>
+          <li><b>不勾</b>：只录你填的专业，分数不够就<b>退档</b>——平行志愿下退档后果很严重。</li>
+        </ul>
+        <p><b>建议：</b>冲的志愿尽量勾；如果该校该组里有你绝对不能接受的专业，那就别填这个组。</p>
+
+        <h4>⑥ 分数和位次，哪个更准</h4>
+        <p>看<b>位次</b>。每年题目难易不同，分数会"通货膨胀"或"缩水"，但位次相对稳定。</p>
+        <p>正确做法：查自己今年的<b>全省位次</b> → 找往年<b>同样位次</b>的考生去了哪些学校 → 那才是你的真实区间。</p>
+
+        <h4>⑦ 常见误区清单</h4>
+        <ul>
+          <li>❌ "分数够了就能上" → 实际是<b>看位次</b>。</li>
+          <li>❌ "45 个志愿随便填" → 顺序错了，等于自废武功。</li>
+          <li>❌ "填了 45 个就一定能录一个" → 全冲 + 不服从调剂，可能一个都录不上。</li>
+          <li>❌ "民办和公办一样" → 学费差很多（民办通常 2—4 万/年），学历效力相同，但家庭要算清账。</li>
+          <li>❌ "看名字选学校" → 很多学校名字听着像公办，其实是民办，要查《招生计划》里的办学性质。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-t"><i class="dot"></i>数据说明</div>
+      <div class="note" id="data-note"></div>
+    </div>
+  </section>
+
+</main>
+
+<nav>
+  <button class="on" data-v="v-fill"><span class="ni">🎯</span>智能填报</button>
+  <button data-v="v-list"><span class="ni">📋</span>志愿表</button>
+  <button data-v="v-lib"><span class="ni">🏫</span>院校库</button>
+  <button data-v="v-help"><span class="ni">📖</span>规则说明</button>
+</nav>
+
+<div id="toast"></div>
+<div id="modal"><div class="sheet" id="sheet"></div></div>
+
+<script>
+/* =========================================================
+   数据区
+   来源：湖北省招办公布的 2026 年本科普通批 / 高职高专普通批
+        （首选历史）平行志愿投档最低分（节选）
+   字段：[校名, 省份, 城市, 办学性质, 投档最低分, 专业组, 层次标签, 批次]
+   ========================================================= */
+const DB=[
+["清华大学","北京","北京","公办",672,"05组","985/211","bk"],
+["北京大学","北京","北京","公办",666,"04组","985/211","bk"],
+["武汉大学","湖北","武汉","公办",628,"05组","985/211","bk"],
+["华中科技大学","湖北","武汉","公办",612,"02组","985/211","bk"],
+["中南财经政法大学","湖北","武汉","公办",603,"09组","211","bk"],
+["湖北大学","湖北","武汉","公办",574,"10组","省重点","bk"],
+["湖北工业大学","湖北","武汉","公办",566,"03组","省重点","bk"],
+["黄冈师范学院","湖北","黄冈","公办",537,"05组","省属本科","bk"],
+["黄冈师范学院","湖北","黄冈","公办",534,"06组","省属本科","bk"],
+["黄冈师范学院","湖北","黄冈","公办",531,"04组","省属本科","bk"],
+["浙江万里学院","浙江","宁波","公办",530,"—","省属本科","bk"],
+["江西飞行学院","江西","南昌","公办",529,"—","省属本科","bk"],
+["广东轻工职业技术大学","广东","广州","公办",529,"—","职业本科","bk"],
+["湖北工程学院","湖北","孝感","公办",528,"—","省属本科","bk"],
+["湖南工程学院","湖南","湘潭","公办",527,"—","省属本科","bk"],
+["桂林航天工业学院","广西","桂林","公办",526,"—","省属本科","bk"],
+["湖北汽车工业学院","湖北","十堰","公办",526,"—","省属本科","bk"],
+["南阳理工学院","河南","南阳","公办",525,"—","省属本科","bk"],
+["赣南科技学院","江西","赣州","公办",525,"—","省属本科","bk"],
+["吉林建筑大学","吉林","长春","公办",523,"—","省属本科","bk"],
+["山西科技学院","山西","晋城","公办",522,"—","省属本科","bk"],
+["许昌学院","河南","许昌","公办",521,"—","省属本科","bk"],
+["湖北理工学院","湖北","黄石","公办",520,"—","省属本科","bk"],
+["郑州工程技术学院","河南","郑州","公办",520,"—","省属本科","bk"],
+["江苏科技大学苏州理工学院","江苏","苏州","民办",519,"—","独立学院","bk"],
+["内蒙古工业大学","内蒙古","呼和浩特","公办",518,"—","省属本科","bk"],
+["太原工业学院","山西","太原","公办",517,"—","省属本科","bk"],
+["湖北工程学院","湖北","孝感","公办",515,"01组","省属本科","bk"],
+["湖北科技学院","湖北","咸宁","公办",514,"03组","省属本科","bk"],
+["湖北医药学院","湖北","十堰","公办",514,"02组","省属本科","bk"],
+["武昌首义学院","湖北","武汉","民办",512,"—","民办本科","bk"],
+["荆楚理工学院","湖北","荆门","公办",512,"01组","省属本科","bk"],
+["湖北理工学院","湖北","黄石","公办",512,"04组","省属本科","bk"],
+["汉江师范学院","湖北","十堰","公办",511,"05组","省属本科","bk"],
+["湖北文理学院","湖北","襄阳","公办",511,"05组","省属本科","bk"],
+["荆楚理工学院","湖北","荆门","公办",510,"03组","省属本科","bk"],
+["长江大学文理学院","湖北","荆州","民办",499,"03组","独立学院","bk"],
+["浙江树人学院","浙江","杭州","民办",490,"01组","民办本科","bk"],
+["武汉铁路职业技术学院","湖北","武汉","公办",490,"06组","专本联合培养","bk"],
+["湖北水利水电职业技术学院","湖北","武汉","公办",490,"04组","专本联合培养","bk"],
+["湖北恩施学院","湖北","恩施","民办",470,"—","民办本科","bk"],
+["汉口学院","湖北","武汉","民办",470,"—","民办本科","bk"],
+["湖北商贸学院","湖北","武汉","民办",465,"01组","民办本科","bk"],
+["武汉商学院","湖北","武汉","公办",448,"08组","省属本科","bk"],
+["荆州学院","湖北","荆州","民办",443,"01组","民办本科","bk"],
+["福州理工学院","福建","福州","民办",443,"01组","民办本科","bk"],
+["青岛滨海学院","山东","青岛","民办",443,"02组","民办本科","bk"],
+["山东英才学院","山东","济南","民办",443,"01组","民办本科","bk"],
+["柳州工学院","广西","柳州","民办",443,"01组","民办本科","bk"],
+["武汉城市职业学院","湖北","武汉","公办",459,"01组","高职专科","zk"],
+["武汉软件工程职业学院","湖北","武汉","公办",457,"01组","高职专科","zk"],
+["长江工程职业技术学院","湖北","武汉","公办",457,"06组","高职专科","zk"],
+["长江职业学院","湖北","武汉","公办",456,"04组","高职专科","zk"],
+["重庆城市管理职业大学","重庆","重庆","公办",442,"—","职业本科","zk"],
+["湖北财税职业学院","湖北","武汉","公办",440,"03组","高职专科","zk"],
+["邵阳职业技术学院","湖南","邵阳","公办",440,"—","高职专科","zk"],
+["襄阳职业技术大学","湖北","襄阳","公办",440,"—","职业本科","zk"],
+["咸宁职业技术学院","湖北","咸宁","公办",439,"—","高职专科","zk"],
+["武汉商贸职业学院","湖北","武汉","民办",432,"04组","高职专科","zk"]
+];
+
+/* 2026 年湖北历史类 分数→位次 锚点（官方一分一段，部分为区间估算） */
+const ANCH=[[672,30],[666,60],[628,500],[612,1000],[603,1600],[581,3400],[574,4600],
+[566,6400],[540,16413],[537,18500],[532,19955],[530,20607],[526,22003],[520,24054],
+[517,25065],[512,27000],[510,28000],[500,28838],[490,32000],[480,36000],[470,40000],
+[460,44500],[450,49000],[443,54927],[430,61000],[200,120000]];
+
+const BATCH_NAME={bk:"本科普通批",zk:"高职高专普通批"};
+const MAXVOL={bk:45,zk:30};
+
+/* =========================================================
+   工具函数
+   ========================================================= */
+const $=s=>document.querySelector(s);
+const $$=s=>Array.from(document.querySelectorAll(s));
+
+function scoreToRank(s){
+  s=Number(s);
+  if(!s||s<=0) return null;
+  const A=ANCH;
+  if(s>=A[0][0]) return A[0][1];
+  if(s<=A[A.length-1][0]) return A[A.length-1][1];
+  for(let i=0;i<A.length-1;i++){
+    const [s1,r1]=A[i],[s2,r2]=A[i+1];
+    if(s<=s1&&s>=s2){
+      const t=(s1-s)/(s1-s2||1);
+      return Math.round(r1+(r2-r1)*t);
+    }
+  }
+  return null;
+}
+function rankToScore(r){
+  const A=ANCH;
+  if(r<=A[0][1]) return A[0][0];
+  if(r>=A[A.length-1][1]) return A[A.length-1][0];
+  for(let i=0;i<A.length-1;i++){
+    const [s1,r1]=A[i],[s2,r2]=A[i+1];
+    if(r>=r1&&r<=r2){
+      const t=(r-r1)/((r2-r1)||1);
+      return Math.round(s1-(s1-s2)*t);
+    }
+  }
+  return null;
+}
+/* 分档：d=院校线 - 考生分 */
+function tier(d){
+  if(d>18) return null;
+  if(d>=3) return "c";
+  if(d>=-8) return "w";
+  if(d>=-25) return "b";
+  return "d";
+}
+const TIER_NAME={c:"冲",w:"稳",b:"保",d:"垫"};
+function tierOf(uniScore,myScore){
+  return tier(uniScore-myScore);
+}
+function fmt(n){return n==null?"—":n.toLocaleString("en-US")}
+
+let toastT;
+function toast(msg){
+  const t=$("#toast"); t.textContent=msg; t.classList.add("on");
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("on"),1900);
+}
+
+/* =========================================================
+   状态
+   ========================================================= */
+const LS="gk_vol_hb_v1";
+let state={score:null,batch:"bk",list:[],majors:{},obey:{}};
+function save(){try{localStorage.setItem(LS,JSON.stringify(state))}catch(e){}}
+function load(){
+  try{
+    const s=JSON.parse(localStorage.getItem(LS)||"{}");
+    if(s&&typeof s==="object"){
+      state.score=s.score??null; state.batch=s.batch||"bk";
+      state.list=Array.isArray(s.list)?s.list:[]; state.majors=s.majors||{}; state.obey=s.obey||{};
+    }
+  }catch(e){}
+}
+const keyOf=u=>u[0]+"|"+u[4]+"|"+u[5];
+
+/* =========================================================
+   视图切换
+   ========================================================= */
+$$("nav button").forEach(b=>{
+  b.onclick=()=>{
+    $$("nav button").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on");
+    $$(".view").forEach(v=>v.classList.remove("on"));
+    $("#"+b.dataset.v).classList.add("on");
+    window.scrollTo({top:0,behavior:"smooth"});
+    if(b.dataset.v==="v-list") renderList();
+    if(b.dataset.v==="v-lib") renderLib();
+    updateCart();
+  };
+});
+function goView(id){
+  const b=$$("nav button").find(x=>x.dataset.v===id);
+  if(b) b.click();
+  else updateCart();
+}
+
+/* =========================================================
+   智能匹配
+   ========================================================= */
+$("#btn-match").onclick=()=>{
+  const s=Number($("#score").value);
+  if(!s||s<150||s>750){ toast("请输入 150—750 之间的分数"); return; }
+  state.score=s; state.batch=$("#batch").value; save();
+  renderMatch();
+  const out=$("#match-out");
+  if(out) out.scrollIntoView({behavior:"smooth",block:"start"});
+};
+
+function renderMatch(){
+  const out=$("#match-out");
+  if(!state.score){ out.innerHTML=""; return; }
+  const my=state.score, rank=scoreToRank(my);
+  const batch=state.batch;
+  const pool=DB.filter(u=>u[7]===batch||(batch==="bk"&&u[7]==="zk"&&u[4]>=470));
+  const groups={c:[],w:[],b:[],d:[]};
+  pool.forEach(u=>{
+    const t=tierOf(u[4],my);
+    if(t) groups[t].push(u);
+  });
+  Object.keys(groups).forEach(k=>groups[k].sort((a,b)=>b[4]-a[4]));
+
+  const total=groups.c.length+groups.w.length+groups.b.length+groups.d.length;
+
+  /* 分数线提醒：压线 / 未达线 / 超出库范围 */
+  const BENKE=443;
+  const maxInPool=pool.length?Math.max.apply(null,pool.map(u=>u[4])):0;
+  let lineTip="";
+  if(my>maxInPool+25){
+    lineTip+=`<div class="hint warn">你的分数比本库最高投档线（<b>${maxInPool}</b> 分）还高出不少，库内院校对你而言都属"垫"档。本系统院校库为节选样本，这个分数段的院校未收录，请查阅省招办完整招生计划。</div>`;
+  }
+  if(batch==="bk"){
+    if(my<BENKE){
+      lineTip+=`<div class="hint warn">⚠️ 你的分数 <b>${my}</b> 低于 2026 年湖北历史类本科线 <b>${BENKE}</b> 分。本科批平行志愿须达到本科线才有投档机会，建议切到「高职高专批」查看专科院校。</div>`;
+    }else if(my<=BENKE+12){
+      lineTip+=`<div class="hint warn">⚠️ 你的分数 <b>${my}</b> 比本科线 <b>${BENKE}</b> 只高 <b>${my-BENKE}</b> 分，属于本科批"压线区"，可报院校集中在民办本科与部分省内公办。建议同时到「高职高专批」看优质专科做双保险。</div>`;
+    }
+  }
+
+  let html=`<div class="card">
+    <div class="card-t"><i class="dot"></i>匹配结果<span class="sub">${BATCH_NAME[batch]} · 共 ${total} 所</span></div>
+    <div class="stat-grid">
+      <div class="stat c"><div class="n">${groups.c.length}</div><div class="l">冲</div></div>
+      <div class="stat w"><div class="n">${groups.w.length}</div><div class="l">稳</div></div>
+      <div class="stat b"><div class="n">${groups.b.length}</div><div class="l">保</div></div>
+      <div class="stat d"><div class="n">${groups.d.length}</div><div class="l">垫</div></div>
+    </div>
+    <div class="hint">
+      你的分数 <b>${my}</b> 分，对应全省历史类位次约 <b>${fmt(rank)}</b> 名（估算值）。<br>
+      下方按"冲→稳→保→垫"排列，点"加入志愿表"开始填报。
+    </div>
+    ${lineTip}
+  </div>`;
+
+  const order=["c","w","b","d"];
+  const desc={c:"分数比你高，博更好的平台",w:"和你分数相当，主力区",b:"比你分数低，稳稳接住",d:"兜底用，几乎不会滑档"};
+  let any=false;
+  order.forEach(k=>{
+    if(!groups[k].length) return;
+    any=true;
+    html+=`<div class="card"><div class="card-t"><i class="dot"></i>${TIER_NAME[k]}档<span class="sub">${desc[k]}</span></div>`;
+    html+=groups[k].map(u=>uniCard(u,k)).join("");
+    html+=`</div>`;
+  });
+  /* 空档说明：避免把"库里没有"误读成"没学校可报" */
+  const gaps=order.filter(k=>!groups[k].length).map(k=>TIER_NAME[k]);
+  if(any&&gaps.length){
+    html+=`<div class="card"><div class="hint warn">「${gaps.join("、")}」档在这个分数没有匹配到院校。这是正常的——本系统院校库是 2026 年湖北历史类数据的<b>节选样本</b>，不是当年全部招生院校；实际可报范围请以省招办发布的计划为准。</div></div>`;
+  }
+  if(!any){
+    html+=`<div class="card"><div class="empty"><div class="e-ic">🔍</div>
+      <div class="e-t">这个分数段暂时没有匹配院校</div>
+      <div class="e-s">本系统院校库为 2026 年数据节选样本，可到"院校库"页面浏览全部院校。</div>
+    </div></div>`;
+  }
+  out.innerHTML=html;
+  bindUniCards(out);
+  updateCart();
+}
+
+function uniCard(u,k){
+  const [n,p,c,t,s,g,lv]=u;
+  const inList=state.list.some(x=>keyOf(x)===keyOf(u));
+  const d=s-state.score;
+  return `<div class="uni ${k}" data-k="${keyOf(u)}">
+    <div class="bar"></div>
+    <div class="uni-h">
+      <div class="uni-n">${n}</div>
+      <div class="uni-s">${s}</div>
+    </div>
+    <div class="uni-m">
+      <span class="tag ${t==="公办"?"pub":"pri"}">${t}</span>
+      <span class="tag">${p}·${c}</span>
+      <span class="tag grp">${g}</span>
+      <span class="tag lv">${lv}</span>
+      <span class="tag">${d>0?"+"+d:d} 分</span>
+    </div>
+    <div class="uni-act">
+      <button class="btn mini ${inList?"ghost":""}" data-add="${keyOf(u)}" ${inList?"disabled":""}>
+        ${inList?"✓ 已在志愿表":"+ 加入志愿表"}
+      </button>
+      <button class="btn mini ghost" data-info="${keyOf(u)}">详情</button>
+    </div>
+  </div>`;
+}
+
+function bindUniCards(root){
+  root.querySelectorAll("[data-add]").forEach(b=>{
+    b.onclick=()=>addVol(b.dataset.add);
+  });
+  root.querySelectorAll("[data-info]").forEach(b=>{
+    b.onclick=()=>showInfo(b.dataset.info);
+  });
+}
+
+function findUni(k){ return DB.find(u=>keyOf(u)===k); }
+
+function addVol(k){
+  const u=findUni(k); if(!u) return;
+  const max=MAXVOL[state.batch]||45;
+  if(state.list.length>=max){ toast(`最多只能填 ${max} 个志愿`); return; }
+  if(state.list.some(x=>keyOf(x)===k)){ toast("这个志愿已经在表里了"); return; }
+  state.list.push(u);
+  if(state.obey[k]===undefined) state.obey[k]=true;
+  save();
+  // 只更新对应按钮，不重渲染整页（避免滚动位置丢失）
+  document.querySelectorAll("[data-add]").forEach(b=>{
+    if(b.dataset.add===k){
+      b.disabled=true; b.classList.add("ghost"); b.textContent="✓ 已在志愿表";
+    }
+  });
+  updateCart();
+  toast("已加入第 "+state.list.length+" 志愿");
+}
+/* 底部浮动条：实时显示已选志愿数 */
+function updateCart(){
+  let bar=$("#cart-bar");
+  const n=state.list.length;
+  if(!bar){
+    bar=document.createElement("div");
+    bar.id="cart-bar";
+    bar.onclick=()=>goView("v-list");
+    document.body.appendChild(bar);
+  }
+  if(n===0||!$("#v-fill").classList.contains("on")){ bar.classList.remove("on"); return; }
+  bar.innerHTML=`已选 <b>${n}</b> 个志愿 · 点这里去看志愿表 →`;
+  bar.classList.add("on");
+}
+
+function delVol(k){
+  state.list=state.list.filter(x=>keyOf(x)!==k);
+  save(); renderList(); renderMatch();
+}
+function moveVol(i,dir){
+  const j=i+dir;
+  if(j<0||j>=state.list.length) return;
+  const a=state.list;
+  [a[i],a[j]]=[a[j],a[i]];
+  save(); renderList();
+}
+
+/* =========================================================
+   志愿表渲染
+   ========================================================= */
+function renderList(){
+  const max=MAXVOL[state.batch]||45;
+  $("#vol-count").textContent=state.list.length+" / "+max;
+  const cnt={c:0,w:0,b:0,d:0};
+  state.list.forEach(u=>{
+    const t=state.score?tierOf(u[4],state.score):null;
+    if(t) cnt[t]++;
+  });
+  $("#n-c").textContent=cnt.c; $("#n-w").textContent=cnt.w;
+  $("#n-b").textContent=cnt.b; $("#n-d").textContent=cnt.d;
+  const tot=state.list.length||1;
+  const bar=$("#pbar");
+  bar.children[0].style.width=(cnt.c/tot*100)+"%";
+  bar.children[1].style.width=(cnt.w/tot*100)+"%";
+  bar.children[2].style.width=(cnt.b/tot*100)+"%";
+  bar.children[3].style.width=(cnt.d/tot*100)+"%";
+
+  const box=$("#vol-list");
+  if(!state.list.length){
+    box.innerHTML=`<div class="card"><div class="empty">
+      <div class="e-ic">📋</div>
+      <div class="e-t">志愿表还是空的</div>
+      <div class="e-s">去"智能填报"页面输入分数，把心仪的学校加进来吧。</div>
+    </div></div>`;
+    return;
+  }
+
+  let html="";
+  // 风险提示
+  const tips=[];
+  if(state.list.length<10) tips.push(["warn","⚠️","志愿数量偏少。本科批有 45 个志愿位，建议填满，多一个志愿多一次机会。"]);
+  if(cnt.c>state.list.length*0.4) tips.push(["danger","⚠️","冲的志愿占比超过 40%，风险偏高。建议把比例压到 20% 左右，多留稳和保。"]);
+  if(cnt.b+cnt.d===0) tips.push(["danger","⚠️","没有保底志愿！一旦前面都没录上，会直接掉到下一批次。"]);
+  if(cnt.b+cnt.d>0&&cnt.b+cnt.d<state.list.length*0.25) tips.push(["warn","⚠️","保底志愿偏少，建议保+垫占到 30% 以上。"]);
+  // 顺序检查
+  if(state.score){
+    let bad=0;
+    for(let i=1;i<state.list.length;i++){
+      if(state.list[i][4]>state.list[i-1][4]) bad++;
+    }
+    if(bad>0) tips.push(["danger","⚠️",`有 ${bad} 处顺序颠倒（后面的学校分数比前面高）。平行志愿按顺序检索，顺序错了会白白浪费志愿位。`]);
+  }
+  if(!tips.length) tips.push(["ok","✅","梯度结构看起来不错，继续保持。"]);
+  tips.forEach(([cls,ic,txt])=>{
+    html+=`<div class="tip ${cls} no-print"><span class="ti">${ic}</span><span>${txt}</span></div>`;
+  });
+
+  html+=`<div class="card"><div class="card-t"><i class="dot"></i>志愿顺序<span class="sub">从上到下依次检索</span></div>`;
+  state.list.forEach((u,i)=>{
+    const k=keyOf(u);
+    const t=state.score?tierOf(u[4],state.score):null;
+    const cls=t||"";
+    const maj=(state.majors[k]||[]).filter(x=>x).join("、")||"（未填专业）";
+    const ob=state.obey[k]!==false;
+    html+=`<div class="vol ${cls}">
+      <div class="vol-no">${i+1}</div>
+      <div class="vol-b">
+        <div class="vol-n">${u[0]}</div>
+        <div class="vol-i">
+          <span>${u[3]}</span><span>${u[1]}·${u[2]}</span>
+          <span>投档线 <b>${u[4]}</b></span><span>${u[5]}</span>
+          ${t?`<span style="color:var(--${t==="c"?"chong":t==="w"?"wen":t==="b"?"bao":"dian"})"><b>${TIER_NAME[t]}</b></span>`:""}
+        </div>
+        <div class="vol-maj">专业：${maj} · ${ob?"服从调剂":"不服从调剂"}</div>
+      </div>
+      <div class="vol-ops no-print">
+        <button data-up="${i}" ${i===0?"disabled":""}>▲ 上移</button>
+        <button data-dn="${i}" ${i===state.list.length-1?"disabled":""}>▼ 下移</button>
+        <button data-mj="${k}">✎ 改专业</button>
+        <button class="del" data-dl="${k}">✕ 删除</button>
+      </div>
+    </div>`;
+  });
+  html+=`</div>`;
+  box.innerHTML=html;
+
+  box.querySelectorAll("[data-up]").forEach(b=>b.onclick=()=>moveVol(+b.dataset.up,-1));
+  box.querySelectorAll("[data-dn]").forEach(b=>b.onclick=()=>moveVol(+b.dataset.dn,1));
+  box.querySelectorAll("[data-dl]").forEach(b=>b.onclick=()=>delVol(b.dataset.dl));
+  box.querySelectorAll("[data-mj]").forEach(b=>b.onclick=()=>editMajor(b.dataset.mj));
+}
+
+/* =========================================================
+   专业编辑
+   ========================================================= */
+function editMajor(k){
+  const u=findUni(k); if(!u) return;
+  const cur=state.majors[k]||["","","","","",""];
+  const ob=state.obey[k]!==false;
+  $("#sheet").innerHTML=`
+    <div class="sheet-h"><h3>${u[0]} · ${u[5]}</h3><button id="mclose">×</button></div>
+    <div class="tip info"><span class="ti">💡</span><span>每个院校专业组内可填 <b>6 个专业</b>。专业名称请以当年《招生计划》为准，这里先练习填写顺序。</span></div>
+    <div id="majs">${cur.map((m,i)=>`<input class="maj-in" data-i="${i}" value="${m||""}" placeholder="专业 ${i+1}">`).join("")}</div>
+    <div class="switch"><input type="checkbox" id="obey" ${ob?"checked":""}><label for="obey">服从专业调剂（强烈建议勾选）</label></div>
+    <button class="btn full" id="msave">保存</button>
+  `;
+  $("#modal").classList.add("on");
+  $("#mclose").onclick=closeModal;
+  $("#msave").onclick=()=>{
+    state.majors[k]=$$("#majs .maj-in").map(x=>x.value.trim());
+    state.obey[k]=$("#obey").checked;
+    save(); closeModal(); renderList(); toast("已保存");
+  };
+}
+function closeModal(){ $("#modal").classList.remove("on"); }
+$("#modal").onclick=e=>{ if(e.target.id==="modal") closeModal(); };
+
+function showInfo(k){
+  const u=findUni(k); if(!u) return;
+  const rank=scoreToRank(u[4]);
+  const gap=state.score?u[4]-state.score:null;
+  $("#sheet").innerHTML=`
+    <div class="sheet-h"><h3>${u[0]}</h3><button id="mclose">×</button></div>
+    <div class="kv"><span class="k">办学性质</span><span class="v">${u[3]}</span></div>
+    <div class="kv"><span class="k">所在地</span><span class="v">${u[1]} · ${u[2]}</span></div>
+    <div class="kv"><span class="k">2026 投档线</span><span class="v"><b>${u[4]}</b> 分（历史类 · ${u[5]}）</span></div>
+    <div class="kv"><span class="k">对应位次</span><span class="v">约 ${fmt(rank)} 名（估算）</span></div>
+    <div class="kv"><span class="k">层次标签</span><span class="v">${u[6]}</span></div>
+    ${gap!==null?`<div class="kv"><span class="k">与你的差距</span><span class="v">${gap>0?"高于你 "+gap+" 分":gap===0?"与你持平":"低于你 "+(-gap)+" 分"} → <b>${TIER_NAME[tierOf(u[4],state.score)]||"—"}档</b></span></div>`:""}
+    <div class="tip warn" style="margin-top:12px"><span class="ti">⚠️</span><span>投档线是<b>该专业组最低分</b>，不等于你能录上心仪专业。热门专业往往要高出投档线 10—30 分。</span></div>
+    <button class="btn full" id="madd">+ 加入志愿表</button>
+  `;
+  $("#modal").classList.add("on");
+  $("#mclose").onclick=closeModal;
+  $("#madd").onclick=()=>{ addVol(k); closeModal(); };
+}
+
+/* =========================================================
+   院校库
+   ========================================================= */
+let libFilter="all", libQ="";
+$$("#filters .chip").forEach(c=>{
+  c.onclick=()=>{
+    $$("#filters .chip").forEach(x=>x.classList.remove("on"));
+    c.classList.add("on"); libFilter=c.dataset.f; renderLib();
+  };
+});
+$("#q").oninput=e=>{ libQ=e.target.value.trim(); renderLib(); };
+
+function renderLib(){
+  let arr=DB.slice().sort((a,b)=>b[4]-a[4]);
+  if(libFilter==="hb") arr=arr.filter(u=>u[1]==="湖北");
+  if(libFilter==="pub") arr=arr.filter(u=>u[3]==="公办");
+  if(libFilter==="pri") arr=arr.filter(u=>u[3]==="民办");
+  if(libFilter==="985") arr=arr.filter(u=>u[6].indexOf("985")>=0||u[6].indexOf("211")>=0);
+  if(libFilter==="bk") arr=arr.filter(u=>u[7]==="bk");
+  if(libFilter==="zk") arr=arr.filter(u=>u[7]==="zk");
+  if(libQ) arr=arr.filter(u=>u[0].indexOf(libQ)>=0||u[1].indexOf(libQ)>=0||u[2].indexOf(libQ)>=0);
+
+  $("#lib-count").textContent=arr.length+" 所";
+  const box=$("#lib-list");
+  if(!arr.length){
+    box.innerHTML=`<div class="empty"><div class="e-ic">🔍</div><div class="e-t">没有找到</div>
+      <div class="e-s">换个关键词，或点"全部"看所有院校。</div></div>`;
+    return;
+  }
+  box.innerHTML=arr.map(u=>{
+    const t=state.score?tierOf(u[4],state.score):null;
+    const inList=state.list.some(x=>keyOf(x)===keyOf(u));
+    const d=state.score?u[4]-state.score:null;
+    return `<div class="uni ${t||""}">
+      <div class="bar"></div>
+      <div class="uni-h"><div class="uni-n">${u[0]}</div><div class="uni-s">${u[4]}</div></div>
+      <div class="uni-m">
+        <span class="tag ${u[3]==="公办"?"pub":"pri"}">${u[3]}</span>
+        <span class="tag">${u[1]}·${u[2]}</span>
+        <span class="tag grp">${u[5]}</span>
+        <span class="tag lv">${u[6]}</span>
+        ${d!==null?`<span class="tag">${d>0?"+"+d:d} 分</span>`:""}
+        ${t?`<span class="tag" style="background:#eef2ff;color:#3730a3">${TIER_NAME[t]}档</span>`:""}
+      </div>
+      <div class="uni-act">
+        <button class="btn mini ${inList?"ghost":""}" data-add="${keyOf(u)}" ${inList?"disabled":""}>${inList?"✓ 已在志愿表":"+ 加入志愿表"}</button>
+        <button class="btn mini ghost" data-info="${keyOf(u)}">详情</button>
+      </div>
+    </div>`;
+  }).join("");
+  bindUniCards(box);
+}
+
+/* =========================================================
+   打印 / 清空
+   ========================================================= */
+$("#btn-print").onclick=()=>{
+  if(!state.list.length){ toast("志愿表是空的"); return; }
+  window.print();
+};
+$("#btn-clear").onclick=()=>{
+  if(!state.list.length){ toast("已经是空的"); return; }
+  if(confirm("确定清空全部 "+state.list.length+" 个志愿吗？此操作不可撤销。")){
+    state.list=[]; state.majors={}; state.obey={}; save(); renderList(); renderMatch(); toast("已清空");
+  }
+};
+
+/* =========================================================
+   数据说明
+   ========================================================= */
+$("#data-note").innerHTML=`
+  <b>院校库</b>：共 ${DB.length} 条记录，取自<b>湖北省招办公布的 2026 年本科普通批 / 高职高专普通批（首选历史）平行志愿投档最低分</b>，为便于手机浏览做了节选。<br><br>
+  <b>分数与位次</b>：投档线为 2026 年真实数据；位次由官方一分一段表锚点插值估算，<b>仅供参照</b>。<br><br>
+  <b>不含专业数据</b>：各院校专业组内的具体专业及选科要求，每年都会调整，需查阅当年《招生计划》，本系统专业栏由使用者自行填写练习。<br><br>
+  <b>重要提醒</b>：本系统是<b>学习模拟工具</b>，不是官方填报系统，不能用于实际填报决策。真实填报请以
+  <b>湖北省招生数智综合平台</b>公布的当年招生计划、投档线和你本人的全省位次为准。<br><br>
+  <b>2027 届注意</b>：分数线、招生计划、专业组设置每年都会变化，请用今年的位次去对照往年数据，而不是直接比分数。
+`;
+
+/* =========================================================
+   初始化
+   ========================================================= */
+load();
+if(state.score){
+  $("#score").value=state.score;
+  $("#batch").value=state.batch;
+  renderMatch();
+}
+renderList();
+renderLib();
+updateCart();
+</script>
+</body>
+</html>
