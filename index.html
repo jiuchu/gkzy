@@ -335,14 +335,14 @@ main{padding:14px 12px 20px;max-width:720px;margin:0 auto}
         </div>
       </div>
       <div class="quick">
-        <button class="qbtn" data-s="398.5">8月月考 398.5</button>
-        <button class="qbtn" data-s="430">平时约 430</button>
         <button class="qbtn on" data-s="440">9月调考 440</button>
+        <button class="qbtn" data-s="430">平时约 430</button>
         <button class="qbtn" data-s="443">本科线 443</button>
+        <button class="qbtn" data-s="460">目标 460</button>
       </div>
       <button class="btn full" id="btn-match">开始智能匹配 →</button>
       <div class="hint">
-        提示：默认填 9 月调考 <b>440</b> 分。点上面的快捷按钮可在两次成绩间切换；也可以直接改成 443 / 460 / 480 / 500 试算，看每提高一档能多报什么学校。
+        提示：默认填 9 月调考 <b>440</b> 分——这是目前最接近真实水平的一次成绩。也可以直接改成 443 / 460 / 480 / 500 试算，看每提高一档能多报什么学校。
       </div>
     </div>
 
@@ -350,18 +350,18 @@ main{padding:14px 12px 20px;max-width:720px;margin:0 auto}
     <div class="card" id="score-card">
       <div class="card-t"><i class="dot"></i>妹妹成绩档案<span class="sub">黄州中学 · 高三历史类</span></div>
       <table class="sc-tb">
-        <tr><th>科目</th><th>8月月考</th><th>9月调考</th><th>变化</th></tr>
-        <tr><td>语文</td><td>96</td><td>97</td><td class="up">+1</td></tr>
-        <tr><td class="weak">数学</td><td>43</td><td class="weak">31</td><td class="down">−12</td></tr>
-        <tr><td>英语</td><td>104.5</td><td>104</td><td class="down">−0.5</td></tr>
-        <tr><td>历史</td><td>34</td><td>55</td><td class="up">+21</td></tr>
-        <tr><td>政治</td><td>65</td><td>78</td><td class="up">+13<sup>赋</sup></td></tr>
-        <tr><td>地理</td><td>56</td><td>75</td><td class="up">+19</td></tr>
-        <tr class="tot"><td>总分</td><td>398.5</td><td>440</td><td class="up">+41.5</td></tr>
+        <tr><th>科目</th><th>9月调考</th><th>计分方式</th></tr>
+        <tr><td>语文</td><td>97</td><td class="dim">原始分</td></tr>
+        <tr><td class="weak">数学</td><td class="weak">31</td><td class="dim">原始分 · 最大短板</td></tr>
+        <tr><td>英语</td><td>104</td><td class="dim">原始分</td></tr>
+        <tr><td>历史</td><td>55</td><td class="dim">原始分</td></tr>
+        <tr><td>政治</td><td>78</td><td class="dim">等级赋分</td></tr>
+        <tr><td>地理</td><td>75</td><td class="dim">等级赋分</td></tr>
+        <tr class="tot"><td>总分</td><td>440</td><td class="dim">—</td></tr>
       </table>
       <div class="sc-note">
-        <sup>赋</sup> = 赋分（等级分）成绩。湖北高考<b>政治、地理按等级赋分</b>计入总分（满分 100、起点 30），
-        而学校平时考试不赋分——两次成绩的计分口径不同。历史是首选科目、按原始分计入，34 → 55 是可直接对比的原始分变化。
+        湖北高考<b>政治、地理按等级赋分</b>计入总分（满分 100、起点 30）；语文、数学、英语、历史按<b>原始分</b>计入。
+        本系统以 <b>9 月调考</b>成绩为唯一基准——据妹妹反馈，这一次更接近真实水平。
       </div>
       <div class="sc-gap">
         <div><span class="k">本科线</span><b>443</b></div>
@@ -373,9 +373,9 @@ main{padding:14px 12px 20px;max-width:720px;margin:0 auto}
         <b>历史方向年级排名</b>：55 名
       </div>
       <div class="hint warn">
-        ⚠️ 9 月调考 <b>440</b> 分，距 2026 年湖北历史类本科线 <b>443</b> 分只差 <b>3</b> 分；8 月月考 398.5 分差 44.5 分。<br>
+        ⚠️ 9 月调考 <b>440</b> 分，距 2026 年湖北历史类本科线 <b>443</b> 分只差 <b>3</b> 分。<br>
         但调考与高考的<b>试卷难度、参考人群、赋分口径都不同</b>，440 不等于高考 440 分，不能直接判断“高考就能上线”。
-        反过来，政治、地理在高考中按全省排名赋分，平时不赋分，两者的分差也无法事先推算。
+        政治、地理在高考中按全省排名赋分，调考的赋分口径与高考也不完全一致。
       </div>
       <div class="card-t" style="margin-top:14px"><i class="dot"></i>目标分对照<span class="sub">以 9 月调考 440 分为基准</span></div>
       <table class="sc-tb goal">
@@ -391,7 +391,7 @@ main{padding:14px 12px 20px;max-width:720px;margin:0 auto}
         「本科批可选」= 投档线落在目标分 <b>−25 ~ +18</b> 分区间（即保/稳/冲）的院校专业组数量；
         「省外公办(常规)」剔除了中外合作办学、专项计划、预科班等带条件或高学费的特殊组，
         只留普通专业——这才是妹妹真正能去的方向。<br>
-        数学满分 150、两次只拿到 31 和 43 分，是各科中失分最多的一科（同样满分 150 的语文、英语得分率都在 64% 以上）。
+        数学满分 150、9 月调考只拿到 31 分，是各科中失分最多的一科（同样满分 150 的语文、英语得分率都在 64% 以上）。
       </div>
     </div>
 
