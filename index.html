@@ -324,7 +324,7 @@ main{padding:14px 12px 20px;max-width:720px;margin:0 auto}
       <div class="score-row">
         <div class="field">
           <label>高考总分（历史类）</label>
-          <input type="number" id="score" inputmode="numeric" placeholder="例如 480" min="150" max="750" value="440" step="0.5">
+          <input type="number" id="score" inputmode="numeric" placeholder="例如 480" min="150" max="750" value="435" step="0.5">
         </div>
         <div class="field" style="flex:0 0 108px">
           <label>批次</label>
@@ -335,14 +335,16 @@ main{padding:14px 12px 20px;max-width:720px;margin:0 auto}
         </div>
       </div>
       <div class="quick">
-        <button class="qbtn on" data-s="440">9月调考 440</button>
-        <button class="qbtn" data-s="430">平时约 430</button>
+        <button class="qbtn" data-s="377">失常 377（4月）</button>
+        <button class="qbtn on" data-s="435">正常 435（9月）</button>
+        <button class="qbtn" data-s="464">发挥好 464（2月）</button>
         <button class="qbtn" data-s="443">本科线 443</button>
-        <button class="qbtn" data-s="460">目标 460</button>
       </div>
       <button class="btn full" id="btn-match">开始智能匹配 →</button>
       <div class="hint">
-        提示：默认填 9 月调考 <b>440</b> 分——这是目前最接近真实水平的一次成绩。也可以直接改成 443 / 460 / 480 / 500 试算，看每提高一档能多报什么学校。
+        <b>上面三个按钮是她五次大考里真实考过的分数</b>，点一下就能看到不同结果——她的总分跨度有 <b>98 分</b>（366～464），
+        所以"按哪一次算"会得出完全不同的志愿表。建议三档都点一遍，尤其要看<b>失常那一档</b>还剩什么可报。<br>
+        也可以手动填 443 / 460 / 480 / 500 试算，看每提高一档能多报什么学校。
       </div>
     </div>
 
@@ -350,42 +352,47 @@ main{padding:14px 12px 20px;max-width:720px;margin:0 auto}
     <div class="card" id="score-card">
       <div class="card-t"><i class="dot"></i>妹妹成绩档案<span class="sub">黄州中学 · 高三历史类</span></div>
       <table class="sc-tb">
-        <tr><th>科目</th><th>9月调考</th><th>计分方式</th></tr>
-        <tr><td>语文</td><td>97</td><td class="dim">原始分</td></tr>
-        <tr><td class="weak">数学</td><td class="weak">31</td><td class="dim">原始分 · 最大短板</td></tr>
-        <tr><td>英语</td><td>104</td><td class="dim">原始分</td></tr>
-        <tr><td>历史</td><td>55</td><td class="dim">原始分</td></tr>
-        <tr><td>政治</td><td>78</td><td class="dim">等级赋分</td></tr>
-        <tr><td>地理</td><td>75</td><td class="dim">等级赋分</td></tr>
-        <tr class="tot"><td>总分</td><td>440</td><td class="dim">—</td></tr>
+        <tr><th>考试</th><th>总分</th><th>年级名次</th><th>数学</th><th>英语</th><th>历史</th><th>政治</th><th>地理</th></tr>
+        <tr><td>2 月</td><td>464</td><td class="hl">44</td><td class="weak">42</td><td>98</td><td>66</td><td>88</td><td>80</td></tr>
+        <tr><td>4 月</td><td>377</td><td class="dim">81</td><td class="weak">30</td><td>89</td><td>50</td><td>49</td><td>59</td></tr>
+        <tr><td>7 月</td><td>462</td><td>59</td><td class="weak">43</td><td>106</td><td>59</td><td>69</td><td>80</td></tr>
+        <tr><td>8 月</td><td>366</td><td>70</td><td class="weak">43</td><td>104</td><td>34</td><td>37</td><td>51</td></tr>
+        <tr class="tot"><td>9 月</td><td>435</td><td>55</td><td class="weak">31</td><td>102</td><td>55</td><td>78</td><td>72</td></tr>
       </table>
       <div class="sc-note">
-        湖北高考<b>政治、地理按等级赋分</b>计入总分（满分 100、起点 30）；语文、数学、英语、历史按<b>原始分</b>计入。
-        本系统以 <b>9 月调考</b>成绩为唯一基准——据妹妹反馈，这一次更接近真实水平。
+        <b>语文</b>（表内未列）：2 月 90、7 月 104、8 月 97、9 月 97。语文满分 150，属原始分计入。
+      </div>
+      <div class="sc-note">
+        湖北高考<b>政治、地理按等级赋分</b>计入总分（满分 100、起点 30）；语文、数学、英语、历史按<b>原始分</b>计入。<br>
+        <b>总分跨度 98 分（366～464），年级名次跨度 44～81 名</b>——这不是稳定成绩，是"上下大幅摆动"。
+        所以本系统不设单一基准分，请用上面的三情景按钮分别查看。
       </div>
       <div class="sc-gap">
         <div><span class="k">本科线</span><b>443</b></div>
-        <div><span class="k">9月调考</span><b>440</b></div>
-        <div><span class="k">差值</span><b class="neg">−3</b></div>
+        <div><span class="k">9月调考</span><b>435</b></div>
+        <div><span class="k">差值</span><b class="neg">−8</b></div>
       </div>
       <div class="hint">
-        <b>平时水平</b>：总分约 430（语文 92–106 / 数学 30–50 / 英语 85–95 / 政治 50 左右）<br>
-        <b>历史方向年级排名</b>：55 名
+        <b>各科五次区间</b>：数学 30–43 / 英语 89–106 / 历史 34–66 / 政治 37–88 / 地理 51–80 / 语文 90–104<br>
+        <b>历史方向年级排名</b>：44 ~ 81 名（9 月 55 名）
       </div>
       <div class="hint warn">
-        ⚠️ 9 月调考 <b>440</b> 分，距 2026 年湖北历史类本科线 <b>443</b> 分只差 <b>3</b> 分。<br>
-        但调考与高考的<b>试卷难度、参考人群、赋分口径都不同</b>，440 不等于高考 440 分，不能直接判断“高考就能上线”。
-        政治、地理在高考中按全省排名赋分，调考的赋分口径与高考也不完全一致。
+        ⚠️ 9 月调考 <b>435</b> 分，<b>低于</b> 2026 年湖北历史类本科线 <b>443</b> 分 <b>8</b> 分。<br>
+        但调考与高考的<b>试卷难度、参考人群、赋分口径都不同</b>，435 不等于高考 435 分，不能直接判断“高考上不了线”，
+        反过来也不能因为 2 月考过 464 就认为“稳了”。<br>
+        <b>另一件要紧的事</b>：本库最低的院校投档线就是 443 分（本科线），所以<b>分数低于 443 时，本科批只有"冲"没有"稳保"</b>——
+        没有安全垫。这是必须把分数提到 443 以上的直接原因。
       </div>
-      <div class="card-t" style="margin-top:14px"><i class="dot"></i>目标分对照<span class="sub">以 9 月调考 440 分为基准</span></div>
+      <div class="card-t" style="margin-top:14px"><i class="dot"></i>目标分对照<span class="sub">以 9 月 435 分为基准</span></div>
       <table class="sc-tb goal">
         <tr><th>目标总分</th><th>需提分</th><th>本科批可选</th><th>省外公办(常规)</th></tr>
-        <tr><td><b>443</b></td><td>+3</td><td>62 组</td><td class="dim">0 组</td></tr>
-        <tr><td><b>460</b></td><td>+20</td><td>105 组</td><td class="dim">0 组</td></tr>
-        <tr><td><b>480</b></td><td>+40</td><td>143 组</td><td class="dim">0 组</td></tr>
-        <tr><td><b>500</b></td><td>+60</td><td>317 组</td><td class="hl">101 组</td></tr>
-        <tr><td><b>510</b></td><td>+70</td><td>411 组</td><td class="hl">199 组</td></tr>
-        <tr><td><b>520</b></td><td>+80</td><td>386 组</td><td class="hl">223 组</td></tr>
+        <tr><td><b>443</b><span class="dim"> 本科线</span></td><td>+8</td><td>62 组</td><td class="dim">0 组</td></tr>
+        <tr><td><b>450</b></td><td>+15</td><td>79 组</td><td class="dim">0 组</td></tr>
+        <tr><td><b>460</b></td><td>+25</td><td>105 组</td><td class="dim">0 组</td></tr>
+        <tr><td><b>464</b><span class="dim"> 2月水平</span></td><td>+29</td><td>112 组</td><td class="dim">0 组</td></tr>
+        <tr><td><b>480</b></td><td>+45</td><td>143 组</td><td class="dim">0 组</td></tr>
+        <tr><td><b>500</b></td><td>+65</td><td>317 组</td><td class="hl">101 组</td></tr>
+        <tr><td><b>520</b></td><td>+85</td><td>386 组</td><td class="hl">223 组</td></tr>
       </table>
       <div class="hint">
         「本科批可选」= 投档线落在目标分 <b>−25 ~ +18</b> 分区间（即保/稳/冲）的院校专业组数量；
@@ -645,7 +652,8 @@ $$(".qbtn").forEach(b=>{
     $$(".qbtn").forEach(x=>x.classList.remove("on"));
     b.classList.add("on");
     $("#score").value=b.dataset.s;
-    $("#batch").value=Number(b.dataset.s)>=443?"bk":"zk";
+    /* 不再自动切换批次——低于本科线时本科批仍有"冲"档院校可看，
+       自动跳到专科会把它们藏起来。批次交给用户自己选。 */
     $("#btn-match").click();
   };
 });
@@ -1053,7 +1061,7 @@ $("#data-note").innerHTML=`
    初始化
    ========================================================= */
 load();
-if(!state.score){ state.score=440; state.batch="zk"; }
+if(!state.score){ state.score=435; state.batch="bk"; }
 $("#score").value=state.score;
 $("#batch").value=state.batch;
 renderMatch();
