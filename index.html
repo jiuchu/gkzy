@@ -392,6 +392,9 @@ a.lk{font-size:12.5px;font-weight:600;text-decoration:none;color:var(--brand2);b
 @media(max-width:360px){
   .stat-grid{grid-template-columns:repeat(2,1fr)}
   .uni-s{font-size:16px}
+  /* 成绩档案表现在 9 列（补了语文），320 宽的卡片放不下：把单元格左右留白从 8px 压到 4px */
+  .sc-tb{font-size:12px}
+  .sc-tb th,.sc-tb td{padding:6px 4px}
 }
 </style>
 </head>
@@ -445,15 +448,18 @@ a.lk{font-size:12.5px;font-weight:600;text-decoration:none;color:var(--brand2);b
     <div class="card" id="score-card">
       <div class="card-t"><i class="dot"></i>妹妹成绩档案<span class="sub">黄州中学 · 高三历史类</span></div>
       <table class="sc-tb">
-        <tr><th>考试</th><th>总分</th><th>年级名次</th><th>数学</th><th>英语</th><th>历史</th><th>政治</th><th>地理</th></tr>
-        <tr><td>2 月</td><td>464</td><td class="hl">44</td><td class="weak">42</td><td>98</td><td>66</td><td>88</td><td>80</td></tr>
-        <tr><td>4 月</td><td>377</td><td class="dim">81</td><td class="weak">30</td><td>89</td><td>50</td><td>49</td><td>59</td></tr>
-        <tr><td>7 月</td><td>462</td><td>59</td><td class="weak">43</td><td>106</td><td>59</td><td>69</td><td>80</td></tr>
-        <tr><td>8 月</td><td>366</td><td>70</td><td class="weak">43</td><td>104</td><td>34</td><td>37</td><td>51</td></tr>
-        <tr class="tot"><td>9 月</td><td>435</td><td>55</td><td class="weak">31</td><td>102</td><td>55</td><td>78</td><td>72</td></tr>
+        <tr><th>考试</th><th>总分</th><th>年级名次</th><th>语文</th><th>数学</th><th>英语</th><th>历史</th><th>政治</th><th>地理</th></tr>
+        <tr><td>2 月</td><td>464</td><td class="hl">44</td><td>90</td><td class="weak">42</td><td>98</td><td>66</td><td>88</td><td>80</td></tr>
+        <tr><td>4 月</td><td>377</td><td class="dim">81</td><td>100<sup>※</sup></td><td class="weak">30</td><td>89</td><td>50</td><td>49</td><td>59</td></tr>
+        <tr><td>7 月</td><td>462</td><td>59</td><td>104<sup>※</sup></td><td class="weak">43</td><td>106</td><td>59</td><td>69</td><td>80</td></tr>
+        <tr><td>8 月</td><td>366</td><td>70</td><td>97</td><td class="weak">43</td><td>104</td><td>34</td><td>37</td><td>51</td></tr>
+        <tr class="tot"><td>9 月</td><td>435</td><td>55</td><td>97</td><td class="weak">31</td><td>102</td><td>55</td><td>78</td><td>72</td></tr>
       </table>
       <div class="sc-note">
-        <b>语文</b>（表内未列）：2 月 90、7 月 104、8 月 97、9 月 97。语文满分 150，属原始分计入。
+        <b>语文一列怎么来的</b>：语文满分 150、按原始分计入，所以 <b>语文 = 总分 −（数学＋英语＋历史＋政治＋地理）</b>。
+        用已知的四个月验算：2 月 90、8 月 97、9 月 97 <b>倒推结果与记录完全相同</b>，这条算法在本表成立。<br>
+        <b>※</b> 两处不同：<b>4 月 100 是纯倒推</b>（原记录里没有语文）；<b>7 月记录 104、倒推得 105，差 1 分</b>——
+        说明那一月表里某一科与总分的口径差 1 分（最可能是政治/地理的赋分取整），<b>这里按记录值 104 显示</b>，不当它不存在、也不改别的科。
       </div>
       <div class="sc-note">
         湖北高考<b>政治、地理按等级赋分</b>计入总分（满分 100、起点 30）；语文、数学、英语、历史按<b>原始分</b>计入。<br>
@@ -1597,23 +1603,4 @@ $("#data-note").innerHTML=`
 load();
 if(!state.score){ state.score=435; state.batch="bk"; }
 initNotes();
-$("#score").value=state.score;
-$("#batch").value=state.batch;
-renderMatch();
-renderList();
-renderLib();
-updateCart();
-/* 刷新时浏览器会把输入框里她打过的字恢复回来，但过滤状态 libQ 是空的，
-   于是「框里有湖北医药、下面却是 2685 组」。pageshow 在恢复之后触发，这时统一清掉。 */
-addEventListener('pageshow',()=>{
-  const q=$("#q"); if(q.value){ q.value=""; libQ=""; renderLib(); }
-});
-/* 投档模拟要用专业线数据。gk-live.js 是在这段脚本之后才加载的，所以等 load 事件再取。 */
-addEventListener('load',()=>{
-  if(typeof GK==="undefined"||!GK.specialData) return;
-  GK.specialData().then(S=>{ if(!S) return; window.__GK_SPECIAL=S; if(state.list.length) renderList(); });
-});
-</script>
-<script src="gk-live.js"></script>
-</body>
-</html>
+$("#score").val
