@@ -303,6 +303,16 @@ const GK = (() => {
       '</div>';
   }
 
+  /* ---------- 校园配置正文：第三方整理的静态快照，本地文件，没有实时层 ---------- */
+  const FAC_URL = 'facilities.json';
+  let facP = null;
+  function facData() {
+    if (facP) return facP;
+    if (typeof window !== 'undefined' && window.GK_FAC) { facP = Promise.resolve(window.GK_FAC); return facP; }
+    facP = fetch(FAC_URL).then(r => (r.ok ? r.json() : null)).catch(() => null);
+    return facP;
+  }
+
   /* ---------- 组内专业录取线：主站 score/special，参数 local_type_id=2074 才是历史类 ---------- */
   const SPECIAL_URL = 'special.json';
   let spP = null;
@@ -369,5 +379,5 @@ const GK = (() => {
     slot.innerHTML = render(r.groups, r.src, r.stamp);
   }
 
-  return { enhance, fetchGroups, liveGroups, resolve, snapshot, linesData, specialData, CTX, BATCH, SNAPSHOT_URL };
+  return { enhance, fetchGroups, liveGroups, resolve, snapshot, linesData, specialData, facData, CTX, BATCH, SNAPSHOT_URL };
 })();
